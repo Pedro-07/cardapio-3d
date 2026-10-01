@@ -1,26 +1,105 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-ink: #100d0a;
+  --color-panel: #1b1713;
+  --color-cream: #f5ecdf;
+  --color-ember: #ff8a3d;
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html,
+body {
+  background: var(--color-ink);
+  color: var(--color-cream);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Luz quente atrás do prato */
+.stage-glow {
+  background:
+    radial-gradient(60% 45% at 50% 58%, rgb(255 138 61 / 0.16), transparent 70%),
+    radial-gradient(90% 70% at 50% 100%, rgb(255 255 255 / 0.04), transparent 70%);
+}
+
+.mv {
+  --poster-color: transparent;
+  --progress-bar-color: transparent;
+  background: transparent;
+}
+
+/* Cotas de medidas */
+.dim-dot,
+.dim-label,
+.dim-lines {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.dims-on .dim-dot,
+.dims-on .dim-label,
+.dims-on .dim-lines {
+  opacity: 1;
+}
+.dim-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--color-ember);
+  box-shadow: 0 0 0 3px rgb(255 138 61 / 0.25);
+  border: none;
+}
+.dim-label {
+  border-radius: 999px;
+  background: rgb(16 13 10 / 0.85);
+  border: 1px solid rgb(255 138 61 / 0.6);
+  color: var(--color-cream);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 9px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.dim-lines {
+  position: absolute;
+  inset: 0;
+}
+.dim-lines line {
+  stroke: var(--color-ember);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
 }
+.fade-in {
+  animation: fade-in 0.35s ease-out;
+}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+.sheet-up {
+  animation: sheet-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in,
+  .sheet-up {
+    animation: none;
+  }
 }
