@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cardápio 3D
 
-## Getting Started
+Cardápio digital em que o cliente escaneia o QR code da mesa e vê cada prato em 3D,
+com medidas reais, peso, ingredientes, nutrição e alergênicos. Com o botão
+**"Ver na minha mesa"**, o prato é colocado sobre a mesa em **tamanho real** usando a
+câmera do celular (AR): ARCore/Scene Viewer no Android e Quick Look no iPhone.
 
-First, run the development server:
+## Rodar
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `/?mesa=7` abre o cardápio identificando a mesa 7
+- `/?prato=tomahawk` abre direto num prato
+- `/qr` gera e imprime os QR codes das mesas
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> O AR só funciona em HTTPS e no celular. Para testar no seu aparelho, publique
+> (ex.: Vercel) ou use um túnel HTTPS para o `localhost`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Onde mexer
 
-## Learn More
+A direção visual, as telas e as regras de movimento estão em `SPEC.md`.
 
-To learn more about Next.js, take a look at the following resources:
+| O quê | Arquivo |
+| --- | --- |
+| Pratos, textos, preços, origem, harmonização | `src/data/menu.ts` |
+| Abertura (marca + nota do chef) | `src/components/opening.tsx` |
+| Pratos em tela cheia | `src/components/dish-reel.tsx` |
+| Ficha do prato | `src/components/dish-sheet.tsx` |
+| Na sua mesa (3D, medidas, AR) | `src/components/table-view.tsx` |
+| Fotos e vídeos | `public/media/<prato>/` (`poster.webp`, `video.mp4`, `1.webp`…) |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Modelos 3D
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Os `.glb` são referências de porção: forma aproximada, escala real (1 unidade = 1 metro),
+gerados por `node scripts/generate-models.mjs`. Um modelo vindo de IA ou escaneamento entra com
+`node scripts/prepare-model.mjs entrada.glb saida.glb <largura-em-cm>`. Para produção, substitua cada arquivo por um
+escaneamento do prato de verdade, mantendo a escala em metros e o arquivo leve
+(idealmente < 3 MB). Caminhos comuns:
 
-## Deploy on Vercel
+- **Fotogrametria pelo celular** (Polycam, Luma, RealityScan): fotografe o prato em volta e exporte GLB.
+- **Imagem → 3D por IA**: bom para rascunhos rápidos; confira a escala depois.
+- **Modelagem 3D profissional** (Blender) para pratos de destaque.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Após trocar um modelo, confira as medidas em `menu.ts` e comprima com
+`npx @gltf-transform/cli optimize entrada.glb saida.glb`.
